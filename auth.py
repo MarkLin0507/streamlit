@@ -11,7 +11,7 @@ from openai import OpenAI
 CLIENT_ID = st.secrets["CLIENT_ID"]
 CLIENT_SECRET = st.secrets["CLIENT_SECRET"]
 REDIRECT_URI = st.secrets["REDIRECT_URI"]
-api_key = st.secrets["ROPENAI_API_KEY"]
+api_key = st.secrets["OPENAI_API_KEY"]
 
 def create_openai_client():
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -81,7 +81,7 @@ def get_email_summary(emails):
     for email in emails:
         email_content = email['snippet']
         try:
-            response = client.Completion.create(
+            response = client.completion.create(
                 model="gpt-3.5-turbo",
                 prompt=f"Summarize this: {email_content}",
                 max_tokens=50  

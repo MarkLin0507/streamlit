@@ -75,23 +75,26 @@ def get_login_str():
         get_authorization_url(client, REDIRECT_URI))  # 异步获取授权URL
     return f'''<a target = "_self" href = "{authorization_url}">Google login</a>'''  # 返回一个HTML链接
 
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
 def get_email_summary(emails):
     client = create_openai_client()
     summaries = []
     for email in emails:
         email_content = email['snippet']
         try:
-            response = client.completion.create(
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
-                prompt=f"Summarize this: {email_content}",
-                max_tokens=50  
+                messages=[{"role": "user", "content": f"Summarize this email: {email_content}"}],
+                max_tokens=50
             )
             
-            summary = response['choices'][0]['text'].strip()
+            summary = response.choices[0].message.content  
             summaries.append(summary)
         except Exception as e:
             summaries.append(f"An error occurred: {e}")
     return summaries
+
 
 
 def display_user() -> void:

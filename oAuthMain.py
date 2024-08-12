@@ -29,11 +29,9 @@ if __name__ == '__main__':
     
     if st.button("Display User"):
         display_user()
-    else:
-            st.write("You need to log in and display first.")
     
     st.sidebar.title("Options")
-    if st.sidebar.button("Generate Word Cloud"):
+    if st.sidebar.button("Generate Spam Emails Word Cloud"):
         token = st.session_state.get('token', None)
         if token:
             with st.spinner('Fetching spam emails...'):
@@ -45,19 +43,19 @@ if __name__ == '__main__':
         else:
             st.error("You need to log in first.")
 
-    if st.sidebar.button("Show Latest Emails"):
+    if st.sidebar.button("Show Latest 5 Emails Summaries"):
         token = st.session_state.get('token', None)
         if token:
             with st.spinner('Fetching your latest emails...'):
                 latest_emails = asyncio.run(fetch_latest_emails(token))
                 if latest_emails and not isinstance(latest_emails, str):
-                    summaries = get_email_summary(latest_emails[:5])  # 只摘要前5封郵件
+                    summaries = get_email_summary(latest_emails[:5])  
                     st.write("Email Summaries:", summaries)
                 else:
                     st.error("Failed to fetch emails or no emails found.")
         else:
             st.error("You need to log in first.")
-
+    
 
         
   

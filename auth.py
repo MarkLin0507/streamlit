@@ -33,13 +33,13 @@ async def get_email(client: GoogleOAuth2, token: str):
     user_id, user_email = await client.get_id_email(token)
     return user_id, user_email
 
-async def fetch_spam_emails(token: str):
+async def fetch_emails(token: str, mailbox, result_num):
     credentials = Credentials(token)
     service = build('gmail', 'v1', credentials=credentials)
-    results = service.users().messages().list(userId='me', labelIds=['SPAM'], maxResults=30).execute()
+    results = service.users().messages().list(userId='me', labelIds=[mailbox], maxResults=result_num).execute()
     messages = results.get('messages', [])
     if not messages:
-        return "No messages in the spam folder."
+        return "No messages in mailbox"
     else:
         emails = []
         for message in messages:
@@ -51,23 +51,6 @@ async def fetch_spam_emails(token: str):
             emails.append(email_data)
         return emails
 
-async def fetch_latest_emails(token: str):
-    credentials = Credentials(token)
-    service = build('gmail', 'v1', credentials=credentials)
-    results = service.users().messages().list(userId='me', labelIds=['INBOX'], maxResults=10).execute()
-    messages = results.get('messages', [])
-    if not messages:
-        return "No new messages."
-    else:
-        emails = []
-        for message in messages:
-            msg = service.users().messages().get(userId='me', id=message['id']).execute()
-            email_data = {
-                'id': msg['id'],
-                'snippet': msg['snippet']
-            }
-            emails.append(email_data)
-        return emails
 
 def get_login_str():
     client: GoogleOAuth2 = GoogleOAuth2(CLIENT_ID, CLIENT_SECRET)  # 创建GoogleOAuth2实例
